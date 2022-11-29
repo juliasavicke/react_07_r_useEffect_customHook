@@ -1,0 +1,13 @@
+.unlisted {
+  list-style-type: none;
+  padding-left: 0;
+}
+.grid--pr {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
+}
+.singleProduct {
+  padding: 1rem;
+  border: 1px solid #333;
+}
