@@ -18,6 +18,7 @@ function Products(props) {
   // react pats nubraizo pakeitimus html
 
   const [isLoading, setIsLoading] = useState(true);
+  const [toShowForm, setToShowForm] = useState(false);
 
   async function getProducts() {
     try {
@@ -26,7 +27,6 @@ function Products(props) {
       url = '/api/products.json';
       const response = await fetch(url);
       const dataInJs = await response.json();
-      console.log('dataInJs ===', dataInJs);
       setMainProductsArray(dataInJs);
     } catch (error) {
       console.warn('did not get products');
@@ -46,10 +46,18 @@ function Products(props) {
   function productAddHandler(newProduct) {
     // perduodi i AddProduct
     // kviecia setMainProductsArray()
-    const newProductToAdd = [...mainProductsArray, newProduct];
-    setMainProductsArray((prevTodosArr) => newProductToAdd);
+    const newProductWithId = {
+      id: Math.random().toString().slice(2),
+      ...newProduct,
+    };
+
+    setMainProductsArray((prevProducts) => [...prevProducts, newProductWithId]);
+    setToShowForm(false);
     //setMainProductsArray(newProduct);
     // atnaujinam su arrow funkcija (spread operatiorius (...))
+  }
+  function toggleAddProduct() {
+    setToShowForm((prevShowVal) => !prevShowVal);
   }
 
   // one source of truth :D
@@ -57,8 +65,11 @@ function Products(props) {
   return (
     <div>
       <h2>Products</h2>
-      <button>Show Add Product</button>
-      <AddProduct onAdd={productAddHandler} />
+      <button onClick={toggleAddProduct}>
+        {toShowForm ? 'Hide' : 'Show'} Add Product
+      </button>
+      {toShowForm && <AddProduct onAdd={productAddHandler} />}
+
       {isLoading && <h2>loading...</h2>}
       <ul className='unlisted grid--pr'>
         {mainProductsArray.map((pObj) => (

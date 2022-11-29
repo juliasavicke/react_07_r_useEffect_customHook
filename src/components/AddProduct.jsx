@@ -42,9 +42,9 @@ function AddProduct(props) {
     // ir perduodam ja i AddProducts per props
   }
 
-  const title = useInput('Basket ball');
-  const image = useInput('');
-  const price = useInput(0);
+  const title = useInput('Pienas');
+  const image = useInput('/img/pienas.webp');
+  const price = useInput(2.99);
 
   return (
     <fieldset>
