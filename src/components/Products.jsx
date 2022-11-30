@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { getFromStore, isThereValueStored, store } from '../helpers/storage';
 import AddProduct from './AddProduct';
 import './Products.css';
 import SingleProduct from './SingleProduct';
@@ -7,11 +8,17 @@ function Products(props) {
   // 1. sugeneruojam komponenta su tusciu masyvu be duomenu
 
   const [mainProductsArray, setMainProductsArray] = useState([]);
+  let totalProducts = mainProductsArray.length;
 
   // 2. tik sugeneravus useEffect parsiunciam duomenis
 
   useEffect(() => {
-    getProducts();
+    //check if we have products in local storage
+    if (isThereValueStored()) {
+      setIsLoading(false);
+      const storedProducts = getFromStore();
+      setMainProductsArray(storedProducts);
+    } else getProducts();
   }, []);
 
   // 3. parsiuntus atnaujinam tuscia state masyva su gautais duomenimis
@@ -28,6 +35,7 @@ function Products(props) {
       const response = await fetch(url);
       const dataInJs = await response.json();
       setMainProductsArray(dataInJs);
+      store(dataInJs);
     } catch (error) {
       console.warn('did not get products');
     } finally {
@@ -37,10 +45,11 @@ function Products(props) {
   }
 
   function productDeleteHandler(idToDelete) {
-    console.log('idToDelete ===', idToDelete);
-    setMainProductsArray((prevState) =>
-      prevState.filter((pObj) => pObj.id !== idToDelete)
-    );
+    setMainProductsArray((prevState) => {
+      const newState = prevState.filter((pObj) => pObj.id !== idToDelete);
+      store(newState);
+      return newState;
+    });
   }
 
   function productAddHandler(newProduct) {
@@ -51,7 +60,11 @@ function Products(props) {
       ...newProduct,
     };
 
-    setMainProductsArray((prevProducts) => [...prevProducts, newProductWithId]);
+    setMainProductsArray((prevProducts) => {
+      const newState = [...prevProducts, newProductWithId];
+      store(newState);
+      return newState;
+    });
     setToShowForm(false);
     //setMainProductsArray(newProduct);
     // atnaujinam su arrow funkcija (spread operatiorius (...))
@@ -65,6 +78,7 @@ function Products(props) {
   return (
     <div>
       <h2>Products</h2>
+      <h3>{totalProducts}</h3>
       <button onClick={toggleAddProduct}>
         {toShowForm ? 'Hide' : 'Show'} Add Product
       </button>

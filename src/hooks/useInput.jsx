@@ -5,10 +5,14 @@ function useInput(initValue) {
   function inputHandler(e) {
     setInputValue(e.target.value);
   }
+  function resetInput() {
+    setInputValue('');
+  }
 
   return {
     value: inputValue,
     setter: inputHandler,
+    reset: resetInput,
   };
 }
 export default useInput;

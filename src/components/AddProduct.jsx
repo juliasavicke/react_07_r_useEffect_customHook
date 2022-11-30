@@ -1,3 +1,4 @@
+import { useState, useRef } from 'react';
 import useInput from '../hooks/useInput';
 
 function AddProduct(props) {
@@ -24,6 +25,8 @@ function AddProduct(props) {
   //   const [imageValue, setImage] = useInput('');
   //   const [priceValue, setPrice] = useInput('');
 
+  const formRef = useRef();
+
   function handleSubmit(e) {
     e.preventDefault();
     console.log('handling submit');
@@ -46,10 +49,19 @@ function AddProduct(props) {
   const image = useInput('/img/pienas.webp');
   const price = useInput(2.99);
 
+  function formResetHandler() {
+    console.log('formRef.current ===', formRef.current);
+    formRef.current.reset();
+
+    title.reset();
+    image.reset();
+    price.reset();
+  }
+
   return (
     <fieldset>
       <legend>AddProduct</legend>
-      <form onSubmit={handleSubmit}>
+      <form ref={formRef} onSubmit={handleSubmit}>
         <input
           type='text'
           onChange={title.setter}
@@ -70,6 +82,9 @@ function AddProduct(props) {
           value={price.value}
         />
         <button type='submit'>Create</button>
+        <button onClick={formResetHandler} type='button'>
+          Reset
+        </button>
       </form>
       <p>
         Title: {title.value} <br />
